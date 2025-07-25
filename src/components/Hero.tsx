@@ -1,7 +1,10 @@
 import { Button } from './ui/button'
 import { ArrowRight, Sparkles, Clock, Heart } from 'lucide-react'
+import { useApp } from '../hooks/useApp'
 
 export function Hero() {
+  const { setShowGenerator } = useApp()
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-orange-50 pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -27,12 +30,7 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Button 
                 size="lg" 
-                onClick={() => {
-                  const element = document.getElementById('generator')
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' })
-                  }
-                }}
+                onClick={() => setShowGenerator(true)}
                 className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 text-lg"
               >
                 Start Creating

@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import { Button } from './ui/button'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, User } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
+import { useApp } from '../hooks/useApp'
+import { blink } from '../lib/blink'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { user } = useAuth()
+  const { setShowGenerator } = useApp()
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -11,6 +16,20 @@ export function Header() {
       element.scrollIntoView({ behavior: 'smooth' })
       setIsMenuOpen(false)
     }
+  }
+
+  const handleCreateBook = () => {
+    setShowGenerator(true)
+    setIsMenuOpen(false)
+  }
+
+  const handleSignIn = () => {
+    if (user) {
+      blink.auth.logout()
+    } else {
+      blink.auth.login()
+    }
+    setIsMenuOpen(false)
   }
 
   return (
@@ -48,14 +67,30 @@ export function Header() {
           {/* Desktop CTA */}
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6 space-x-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => alert('Sign In functionality would be implemented here. This is a demo.')}
-                className="text-gray-900 hover:text-primary-600"
-              >
-                Sign In
-              </Button>
-              <Button onClick={() => scrollToSection('generator')} className="bg-primary-500 hover:bg-primary-600 text-white">
+              {user ? (
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <User className="h-4 w-4" />
+                    <span>{user.email}</span>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleSignIn}
+                    className="text-gray-900 hover:text-primary-600"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  onClick={handleSignIn}
+                  className="text-gray-900 hover:text-primary-600"
+                >
+                  Sign In
+                </Button>
+              )}
+              <Button onClick={handleCreateBook} className="bg-primary-500 hover:bg-primary-600 text-white">
                 Create Book
               </Button>
             </div>
@@ -96,14 +131,30 @@ export function Header() {
             </button>
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex items-center px-3 space-y-2 flex-col">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => alert('Sign In functionality would be implemented here. This is a demo.')}
-                  className="w-full text-gray-900 hover:text-primary-600"
-                >
-                  Sign In
-                </Button>
-                <Button onClick={() => scrollToSection('generator')} className="w-full bg-primary-500 hover:bg-primary-600 text-white">
+                {user ? (
+                  <>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
+                      <User className="h-4 w-4" />
+                      <span>{user.email}</span>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleSignIn}
+                      className="w-full text-gray-900 hover:text-primary-600"
+                    >
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleSignIn}
+                    className="w-full text-gray-900 hover:text-primary-600"
+                  >
+                    Sign In
+                  </Button>
+                )}
+                <Button onClick={handleCreateBook} className="w-full bg-primary-500 hover:bg-primary-600 text-white">
                   Create Book
                 </Button>
               </div>
